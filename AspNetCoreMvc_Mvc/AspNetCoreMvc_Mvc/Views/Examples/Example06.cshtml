@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Example6";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example05">Previous: Example 5</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example01">Go back to: Example 1</a>
+    </div>
+
+    <h2>Example 6</h2>
+
+    <p>In this section, you modify the <code>HelloWorldController</code> class to use <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-5.0" data-linktype="relative-path">Razor</a> view files. This cleanly encapsulates the process of generating HTML responses to a client. In the HelloWorldController class we use the following code:</p>
+    <pre><code class="lang-csharp">using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
+
+namespace AspNetCoreMvc_Mvc.Controllers
+{
+    public class HelloWorldController : Controller
+    {
+        public IActionResult WelcomeByView(string name, int numTimes = 10)
+        {
+            ViewData[&quot;Message&quot;] = &quot;Hello &quot; + name;
+            ViewData[&quot;NumTimes&quot;] = numTimes;
+            return View();
+        }
+    }
+}
+</code></pre>
+
+    <p>The <code>ViewData</code> dictionary object contains data that will be passed to the view.</p>
+    <p>Create a Welcome view template named <em>Views/HelloWorld/WelcomeByView.cshtml</em>.</p>
+    <p>You'll create a loop in the <em>WelcomeByView.cshtml</em> view template that displays &quot;Hello&quot; <code>NumTimes</code>. Replace the contents of <em>Views/HelloWorld/WelcomeByView.cshtml</em> with the following:</p>
+<pre><code class="lang-cshtml">@@{
+    ViewData[&quot;Title&quot;] = &quot;Welcome&quot;;
+}
+
+&lt;h2&gt;Hello&lt;/h2&gt;
+
+&lt;ol&gt;
+    @@for (int i = 0; i &lt; (int)ViewData[&quot;NumTimes&quot;]!; i++)
+    {
+        &lt;li&gt;@@ViewData[&quot;Message&quot;]&lt;/li&gt;
+    }
+&lt;/ol&gt;
+</code></pre>
+    <p>Save your changes and browse to the following URL:</p>
+    <p><code>https://localhost:{PORT}/HelloWorld/WelcomeByView/?name=Zoli&amp;numtimes=15</code></p>
+
+    <p>Press this button to envoke the example code: <a class="button whitespace_nowrap" target="_blank" href="/HelloWorld/WelcomeByView/?name=Zoli&numtimes=15">Run example 6</a></p>
+
+    <p>Data is taken from the URL and passed to the controller using the <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0" data-linktype="relative-path">MVC model binder</a>. The controller packages the data into a <code>ViewData</code> dictionary and passes that object to the view. The view then renders the data as HTML to the browser. In our case the name is "Zoli" and it is repeated 15 times. In our View we added a few CSS styles to beautify its look.</p>
+    <p><img src="/img/addview05-rick2_50.png" alt="Privacy view showing a Welcome label and the phrase Hello Rick shown four times" title="Privacy view showing a Welcome label and the phrase Hello Rick shown four times"></p>
+    <p>In the preceding sample, the <code>ViewData</code> dictionary was used to pass data from the controller to a view. Later in the tutorial, a view model is used to pass data from a controller to a view. The view model approach to passing data is preferred over the <code>ViewData</code> dictionary approach.</p>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example05">Previous: Example 5</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example01">Go back to: Example 1</a>
+    </div>
+
+</div>
+
+

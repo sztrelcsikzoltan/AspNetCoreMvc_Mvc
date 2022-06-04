@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Controller Page";
+}
+<!--
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+    -->
+
+<div class="container">
+    <div class="div-flex">
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddController">Next: Add a Controller</a>
+    </div>
+
+    <h2>Part 1, get started</h2>
+
+    <p>This tutorial teaches ASP.NET Core MVC web development with controllers and views. At the end of the series, you'll have an app that manages and displays movie data. You learn how to:</p>
+    <div>
+        <ul class="ul-check-mark">
+            <li>Create a web app.</li>
+            <li>Add and scaffold a model.</li>
+            <li>Work with a database.</li>
+            <li>Add search and validation.</li>
+        </ul>
+    </div>
+    <br />
+
+    <h4>Create a web app</h4>
+    <br />
+    <ul>
+        <li>Start Visual Studio and select <strong>Create a new project</strong>.</li>
+        <li>In the <strong>Create a new project</strong> dialog, select <strong>ASP.NET Core Web App (Model-View-Controller)</strong> &gt; <strong>Next</strong>.</li>
+        <li>In the <strong>Configure your new project</strong> dialog, enter <code>MvcMovie</code> for <strong>Project name</strong>. It's important to name the project <em>MvcMovie</em>. Capitalization needs to match each <code>namespace</code> when code is copied.</li>
+        <li>Select <strong>Create</strong>.</li>
+        <li>
+            In the
+            <strong>Create a new ASP.NET Core web application</strong> dialog, select:
+            <ul>
+                <li><strong>.NET Core</strong> and <strong>ASP.NET Core 5.0</strong> in the dropdowns.</li>
+                <li><strong>ASP.NET Core Web App (Model-View-Controller)</strong>.</li>
+                <li><strong>Create</strong>.</li>
+            </ul>
+        </li>
+    </ul>
+    <p><img src="/img/mvc-getstarted01-vs19v16.9.png" alt="Additional info dialog" title="Additional info dialog" /></p>
+    <br />
+
+    <h4>Run the app</h4>
+
+    <ul>
+        <li>
+            <p>Select Ctrl+F5 to run the app without the debugger.</p>
+            <p>Visual Studio displays the following dialog when a project is not yet configured to use SSL:</p>
+            <p><img src="/img/mvc-getstarted02-trustcert.png" alt="This project is configured to use SSL. To avoid SSL warnings in the browser you can choose to trust the self-signed certificate that IIS Express has generated. Would you like to trust the IIS Express SSL certificate?" title="This project is configured to use SSL. To avoid SSL warnings in the browser you can choose to trust the self-signed certificate that IIS Express has generated. Would you like to trust the IIS Express SSL certificate?"></p>
+            <p>Select <strong>Yes</strong> if you trust the IIS Express SSL certificate.</p>
+            <p>The following dialog is displayed:</p>
+            <p><img src="/img/mvc-getstarted03-cert.png" alt="Security warning dialog" title="Security warning dialog" data-linktype="relative-path"></p>
+            <p>Select <strong>Yes</strong> if you agree to trust the development certificate.</p>
+            <p>For information on trusting the Firefox browser, see <a href="https://docs.microsoft.com/en-us/aspnet/core/security/enforcing-ssl?view=aspnetcore-5.0#trust-ff" data-linktype="relative-path">Firefox SEC_ERROR_INADEQUATE_KEY_USAGE certificate error</a>.</p>
+
+            <p>Visual Studio:</p>
+
+            <ul>
+                <li>Starts <a href="https://docs.microsoft.com/en-us/iis/extensions/introduction-to-iis-express/iis-express-overview" data-linktype="absolute-path">IIS Express</a>.</li>
+                <li>
+                    Runs the app.
+                    <p>The address bar shows <code>localhost:port#</code> and not something like <code>example.com</code>. The standard hostname for your local computer is <code>localhost</code>. When Visual Studio creates a web project, a random port is used for the web server.</p>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <p>Launching the app without debugging by selecting Ctrl+F5 allows you to:</p>
+    <ul>
+        <li>Make code changes.</li>
+        <li>Save the file.</li>
+        <li>Quickly refresh the browser and see the code changes.</li>
+    </ul>
+    <p>You can launch the app in debug or non-debug mode from the <strong>Debug</strong> menu item:</p>
+    <p><img src="/img/mvc-getstarted04-debug_menu50.png" alt="Debug menu" title="Debug menu"></p>
+    <p>You can debug the app by selecting the <strong>IIS Express</strong> button</p>
+    <p><img src="/img/mvc-getstarted05-iis_express50.png" alt="IIS Express" title="IIS Express"></p>
+    <p>The following image shows the app:</p>
+    <p><img src="/img/mvc-getstarted06-home50-vs.png" alt="Home or Index page" title="Home or Index page"></p>
+
+    <div class="div-flex">
+        <span class="span-flex"></span>
+        <!--
+        <p><a class="button" href="GetStarted" data-linktype="relative-path">Next: Add a controller</a></p>
+        -->
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddController">Next: Add a Controller</a>
+    </div>
+
+</div>
+

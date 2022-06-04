@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Example5";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example04">Previous: Example 4</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example06">Next: Example 6</a>
+    </div>
+
+    <h2>Example 5</h2>
+
+    <p>In this example we change the code as provided below and use the default paramater name <code> id</code> in the <code>href="/HelloWorld/WelcomeByParameter/3?name=Rick"></code> URL:</p>
+    <pre><code class="lang-csharp">using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
+
+namespace AspNetCoreMvc_Mvc.Controllers
+{
+    public class HelloWorldController : Controller
+    {
+        // GET: /HelloWorld/WelcomeByParameter/
+        public string WelcomeByParameter(string name = "Rick", int id = 5)
+        {
+            return HtmlEncoder.Default.Encode($"Hello {name}, your id is: {id}");
+        }
+    }
+}
+</code></pre>
+
+    <p>Press this button to envoke the example code: <a class="button whitespace_nowrap" target="_blank" href="/HelloWorld/WelcomeByParameter/3?name=Rick">Run example 5</a></p>
+
+    <p>In the preceding URL:</p>
+    <ul>
+        <li>The third URL segment matched the route parameter <code>id</code>.</li>
+        <li>
+            The <code>WelcomeById</code> method contains a parameter <code>id</code> that matched the URL template in the <code>MapControllerRoute</code> method:
+<pre><code class="lang-csharp" highlight-lines="3">app.MapControllerRoute(
+    name: &quot;default&quot;,
+    pattern: &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+</code></pre>
+        </li>
+        <li>The trailing <code>?</code> starts the <a href="https://wikipedia.org/wiki/Query_string" data-linktype="external">query string</a>.</li>
+    </ul>
+
+    <p>In the preceding example:</p>
+    <ul>
+        <li>The third URL segment matched the route parameter <code>id</code>.</li>
+        <li>The <code>Welcome</code> method contains a parameter <code>id</code> that matched the URL template in the <code>MapControllerRoute</code> method.</li>
+        <li>The trailing <code>?</code> (in <code>id?</code>) indicates the <code>id</code> parameter is optional.</li>
+    </ul>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example04">Previous: Example 4</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example06">Next: Example 6</a>
+    </div>
+
+</div>
+

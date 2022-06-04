@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Example4";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example03">Previous: Example 3</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example05">Next: Example 5</a>
+    </div>
+
+    <h2>Example 4</h2>
+
+    <p>In this example we run the same <code>WelcomeByName</code> method (action), but in the <code>href="/Helloworld/WelcomeByName/?name=Rick_from_the_URL&numtimes=2"></code> URL we use query strings to pass the values for the <code>name</code> and <code>numTimes</code> parameters:</p>
+    <pre><code class="lang-csharp">using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
+
+namespace AspNetCoreMvc_Mvc.Controllers
+{
+    public class HelloWorldController : Controller
+    {
+        // GET: /HelloWorld/WelcomeByName/
+        public string WelcomeByName(string name = "Rick", int numTimes = 5)
+        {
+            return HtmlEncoder.Default.Encode($"Hello {name}, NumTimes is: {numTimes}");
+        }
+    }
+}
+</code></pre>
+
+    <p>Press this button to envoke the example code: <a class="button whitespace_nowrap" target="_blank" href="/Helloworld/WelcomeByName/?name=Rick_from_the_URL&numtimes=2">Run example 4</a></p>
+
+    <p>In the preceding example:</p>
+    <ul>
+        <li>
+            The MVC <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0" data-linktype="relative-path">model binding</a> system automatically maps the named parameters from the query string to parameters in the method. Feel free to change the parameter values in the URL. The displayed values will be changed accodingly.
+        </li>
+        <li> Since the <code>name</code> and <code>numTimes</code> parameters and their values are passed in the <a href="https://wikipedia.org/wiki/Query_string" data-linktype="external">query string</a>, the default values are ignored.</li>
+        <li>The <code>?</code> (question mark) in the above URL is a separator, and the query string follows.</li>
+        <li>
+            In the anchor tag, istead of the <code>href</code> tag the query strings can be passed using the <code>asp-route</code> anchor tag helper, so the below anchor tags deliver the same results:
+<pre><code>&lt;a href="/Helloworld/WelcomeByName/?name=Rick_from_the_URL&numtimes=2"&gt;Run example 4&lt;/a&gt;
+
+&lt;a asp-controller="HelloWorld" asp-action="WelcomeByName" asp-route-name="Rick_from_the_URL" asp-route-numTimes="2"&gt;Run example 4&lt;/a&gt;
+</code></pre>
+        </li>
+    </ul>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example03">Previous: Example 3</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-controller="Examples" asp-action="Example05">Next: Example 5</a>
+    </div>
+
+</div>

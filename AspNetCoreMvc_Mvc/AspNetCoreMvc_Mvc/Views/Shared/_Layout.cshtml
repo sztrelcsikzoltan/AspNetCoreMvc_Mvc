@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 navbar-fixed-top">
+            <div class="container">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Models">Model</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Views">View</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Controllers">Controller</a>
+                        </li>
+                        <li class="dropdown">
+                            <!-- when using <a> and asp-area, the text cannot be selected -->
+                            <a class="nav-link text-dark dropdown-toggle" asp-area="" data-toggle="dropdown" role="button" aria-expanded="False">Get started</a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("Get started", "GetStarted", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add a Controller", "AddController", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add a View", "AddView", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add a Model", "AddModel", "GetStarted")</li>
+                                <li>@Html.ActionLink("Work with a database", "WorkWithDatabase", "GetStarted")</li>
+                                <li>@Html.ActionLink("Controller methods", "ControllerMethods", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add search capability", "AddSearchCapability", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add a new field", "AddNewField", "GetStarted")</li>
+                                <li>@Html.ActionLink("Add validation", "AddValidation", "GetStarted")</li>
+                                <li>@Html.ActionLink("Examine the Details", "ExamineDetails", "GetStarted")</li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <!-- when using <a> and asp-area, the text cannot be selected -->
+                            <a class="nav-link text-dark dropdown-toggle" asp-area="" data-toggle="dropdown" role="button" aria-expanded="False">Examples</a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>@Html.ActionLink("Example 1", "Example01", "Examples")</li>
+                                <li>@Html.ActionLink("Example 2", "Example02", "Examples")</li>
+                                <li>@Html.ActionLink("Example 3", "Example03", "Examples")</li>
+                                <li>@Html.ActionLink("Example 4", "Example04", "Examples")</li>
+                                <li>@Html.ActionLink("Example 5", "Example05", "Examples")</li>
+                                <li>@Html.ActionLink("Example 6", "Example06", "Examples")</li>
+
+
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - MVC information website - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["title"] = "Example 6: using View with parameters";
+}
+<div style="margin-left: auto; margin-right: auto; text-align:center; width: 200px;">
+    <h2 style="background-color: green">Hello</h2>
+
+    <ol>
+        @for (int i = 0; i < (int)ViewData["NumTimes"]!; i++)
+        {
+            <li>@ViewData["Message"]</li>
+        }
+
+    </ol>
+</div>     

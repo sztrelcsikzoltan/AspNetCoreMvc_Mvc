@@ -1,0 +1,244 @@
+﻿@{
+    ViewData["Title"] = "Add a View";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddController">Previous: Add a Controller</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddModel">Next: Add a Model</a>
+    </div>
+
+    <h2>Part 3, add a view to an ASP.NET Core MVC app</h2>
+
+    <p>In this section, you modify the <code>HelloWorldController</code> class to use <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/razor?view=aspnetcore-5.0" data-linktype="relative-path">Razor</a> view files. This cleanly encapsulates the process of generating HTML responses to a client.</p>
+    <p>View templates are created using Razor. Razor-based view templates:</p>
+    <ul>
+        <li>Have a <em>.cshtml</em> file extension.</li>
+        <li>Provide an elegant way to create HTML output with C#.</li>
+    </ul>
+    <p>Currently the <code>Index</code> method returns a string with a message in the controller class. In the <code>HelloWorldController</code> class, replace the <code>Index</code> method with the following code:</p>
+<pre><code class="lang-csharp">public IActionResult Index()
+{
+    return View();
+}
+</code></pre>
+    <p>The preceding code:</p>
+    <ul>
+        <li>Calls the controller's <a href="https://docs.microsoft.comhttps://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.controller.view" data-linktype="absolute-path">View</a> method.</li>
+        <li>Uses a view template to generate an HTML response.</li>
+    </ul>
+    <p>Controller methods:</p>
+    <ul>
+        <li>Are referred to as <em>action methods</em>.  For example, the <code>Index</code> action method in the preceding code.</li>
+        <li>Generally return an <a href="https://docs.microsoft.comhttps://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult" data-linktype="absolute-path">IActionResult</a> or a class derived from <a href="https://docs.microsoft.comhttps://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.actionresult" data-linktype="absolute-path">ActionResult</a>, not a type like <code>string</code>.</li>
+    </ul>
+    <h4 id="add-a-view">Add a view</h4>
+
+
+    <p>Right-click on the <em>Views</em> folder, and then <strong>Add &gt; New Folder</strong> and name the folder <em>HelloWorld</em>.</p>
+    <p>Right-click on the <em>Views/HelloWorld</em> folder, and then <strong>Add &gt; New Item</strong>.</p>
+    <p>In the <strong>Add New Item - MvcMovie</strong> dialog:</p>
+    <ul>
+        <li>In the search box in the upper-right, enter <em>view</em></li>
+        <li>Select <strong>Razor View - Empty</strong></li>
+        <li>Keep the <strong>Name</strong> box value, <em>Index.cshtml</em>.</li>
+        <li>Select <strong>Add</strong></li>
+    </ul>
+    <p><img src="/img/addview01-add_view50.png" alt="Add New Item dialog" title="Add New Item dialog"></p>
+
+    <p>Replace the contents of the <em>Views/HelloWorld/Index.cshtml</em> Razor view file with the following:</p>
+<pre><code class="lang-cshtml" highlight-lines="7">@@{
+    ViewData[&quot;Title&quot;] = &quot;Index&quot;;
+}
+
+&lt;h2&gt;Index&lt;/h2&gt;
+
+&lt;p&gt;Hello from our View Template!&lt;/p&gt;
+</code></pre>
+    <p>Navigate to <code>https://localhost:{PORT}/HelloWorld</code>:</p>
+    <ul>
+        <li>
+            <p>The <code>Index</code> method in the <code>HelloWorldController</code> ran the statement <code>return View();</code>, which specified that the method should use a view template file to render a response to the browser.</p>
+        </li>
+        <li>
+            <p>A view template file name wasn't specified, so MVC defaulted to using the default view file. When the view file name isn't specified, the default view is returned. The default view has the same name as the action method, <code>Index</code> in this example. The view template <em>/Views/HelloWorld/Index.cshtml</em> is used.</p>
+        </li>
+        <li>
+            <p>The following image shows the string &quot;Hello from our View Template!&quot; hard-coded in the view:</p>
+            <p><img src="/img/addview02-hell_template.png" alt="Browser window" title="Browser window"></p>
+        </li>
+    </ul>
+    <h4 id="change-views-and-layout-pages">Change views and layout pages</h4>
+    <p>Select the menu links <strong>MvcMovie</strong>, <strong>Home</strong>, and <strong>Privacy</strong>. Each page shows the same menu layout. The menu layout is implemented in the <em>Views/Shared/_Layout.cshtml</em> file.</p>
+    <p>Open the <em>Views/Shared/_Layout.cshtml</em> file.</p>
+    <p><a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-5.0" data-linktype="relative-path">Layout</a> templates allow:</p>
+    <ul>
+        <li>Specifying the HTML container layout of a site in one place.</li>
+        <li>Applying the HTML container layout across multiple pages in the site.</li>
+    </ul>
+    <p>Find the <code>@@RenderBody()</code> line. <code>RenderBody</code> is a placeholder where all the view-specific pages you create show up, <em>wrapped</em> in the layout page. For example, if you select the <strong>Privacy</strong> link, the <strong>Views/Home/Privacy.cshtml</strong> view is rendered inside the <code>RenderBody</code> method.</p>
+    <h2 id="change-the-title-footer-and-menu-link-in-the-layout-file">Change the title, footer, and menu link in the layout file</h2>
+    <p>Replace the content of the <em>Views/Shared/_Layout.cshtml</em> file with the following markup. The changes are highlighted:</p>
+<pre><code class="lang-cshtml" highlight-lines="6,14,40">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot; /&gt;
+    &lt;title&gt;@@ViewData[&quot;Title&quot;] - Movie App&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;~/lib/bootstrap/dist/css/bootstrap.min.css&quot; /&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;~/css/site.css&quot; asp-append-version=&quot;true&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;nav class=&quot;navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3&quot;&gt;
+            &lt;div class=&quot;container-fluid&quot;&gt;
+                &lt;a class=&quot;navbar-brand&quot; asp-area=&quot;&quot; asp-controller=&quot;Movies&quot; asp-action=&quot;Index&quot;&gt;Movie App&lt;/a&gt;
+                &lt;button class=&quot;navbar-toggler&quot; type=&quot;button&quot; data-bs-toggle=&quot;collapse&quot; data-bs-target=&quot;.navbar-collapse&quot; aria-controls=&quot;navbarSupportedContent&quot;
+                        aria-expanded=&quot;false&quot; aria-label=&quot;Toggle navigation&quot;&gt;
+                    &lt;span class=&quot;navbar-toggler-icon&quot;&gt;&lt;/span&gt;
+                &lt;/button&gt;
+                &lt;div class=&quot;navbar-collapse collapse d-sm-inline-flex justify-content-between&quot;&gt;
+                    &lt;ul class=&quot;navbar-nav flex-grow-1&quot;&gt;
+                        &lt;li class=&quot;nav-item&quot;&gt;
+                            &lt;a class=&quot;nav-link text-dark&quot; asp-area=&quot;&quot; asp-controller=&quot;Home&quot; asp-action=&quot;Index&quot;&gt;Home&lt;/a&gt;
+                        &lt;/li&gt;
+                        &lt;li class=&quot;nav-item&quot;&gt;
+                            &lt;a class=&quot;nav-link text-dark&quot; asp-area=&quot;&quot; asp-controller=&quot;Home&quot; asp-action=&quot;Privacy&quot;&gt;Privacy&lt;/a&gt;
+                        &lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;main role=&quot;main&quot; class=&quot;pb-3&quot;&gt;
+            @@RenderBody()
+        &lt;/main&gt;
+    &lt;/div&gt;
+
+    &lt;footer class=&quot;border-top footer text-muted&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &amp;copy; 2021 - Movie App - &lt;a asp-area=&quot;&quot; asp-controller=&quot;Home&quot; asp-action=&quot;Privacy&quot;&gt;Privacy&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+    &lt;script src=&quot;~/lib/jquery/dist/jquery.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;~/lib/bootstrap/dist/js/bootstrap.bundle.min.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;~/js/site.js&quot; asp-append-version=&quot;true&quot;&gt;&lt;/script&gt;
+    @@await RenderSectionAsync(&quot;Scripts&quot;, required: false)
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+    <p>The preceding markup made the following changes:</p>
+    <ul>
+        <li>Three occurrences of <code>MvcMovie</code> to <code>Movie App</code>.</li>
+        <li>The anchor element <code>&lt;a class=&quot;navbar-brand&quot; asp-area=&quot;&quot; asp-controller=&quot;Home&quot; asp-action=&quot;Index&quot;&gt;MvcMovie&lt;/a&gt;</code> to <code>&lt;a class=&quot;navbar-brand&quot; asp-controller=&quot;Movies&quot; asp-action=&quot;Index&quot;&gt;Movie App&lt;/a&gt;</code>.</li>
+    </ul>
+    <p>In the preceding markup, the <code>asp-area=&quot;&quot;</code> <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/built-in/anchor-tag-helper?view=aspnetcore-5.0" data-linktype="relative-path">anchor Tag Helper attribute</a> and attribute value was omitted because this app isn't using <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/areas?view=aspnetcore-5.0" data-linktype="relative-path">Areas</a>.</p>
+    <p><strong>Note</strong>: The <code>Movies</code> controller hasn't been implemented. At this point, the <code>Movie App</code> link isn't functional.</p>
+    <p>Save the changes and select the <strong>Privacy</strong> link. Notice how the title on the browser tab displays <strong>Privacy Policy - Movie App</strong> instead of <strong>Privacy Policy - MvcMovie</strong>:</p>
+    <p><img src="/img/addview03-privacy50.png" alt="Privacy tab" title="Privacy tab"></p>
+    <p>Select the <strong>Home</strong> link.</p>
+    <p>Notice that the title and anchor text display <strong>Movie App</strong>. The changes were made once in the layout template and all pages on the site reflect the new link text and new title.</p>
+    <p>Examine the <em>Views/_ViewStart.cshtml</em> file:</p>
+<pre><code class="lang-cshtml">@@{
+    Layout = &quot;_Layout&quot;;
+}
+</code></pre>
+    <p>The <em>Views/_ViewStart.cshtml</em> file brings in the <em>Views/Shared/_Layout.cshtml</em> file to each view. The <code>Layout</code> property can be used to set a different layout view, or set it to <code>null</code> so no layout file will be used.</p>
+    <p>Open the <em>Views/HelloWorld/Index.cshtml</em> view file.</p>
+    <p>Change the title and <code>&lt;h2&gt;</code> element as highlighted in the following:</p>
+<pre><code class="lang-cshtml" highlight-lines="2,5">@@{
+    ViewData[&quot;Title&quot;] = &quot;Movie List&quot;;
+}
+
+&lt;h2&gt;My Movie List&lt;/h2&gt;
+
+&lt;p&gt;Hello from our View Template!&lt;/p&gt;
+</code></pre>
+    <p>The title and <code>&lt;h2&gt;</code> element are slightly different so it's clear which part of the code changes the display.</p>
+    <p><code>ViewData[&quot;Title&quot;] = &quot;Movie List&quot;;</code> in the code above sets the <code>Title</code> property of the <code>ViewData</code> dictionary to &quot;Movie List&quot;. The <code>Title</code> property is used in the <code>&lt;title&gt;</code> HTML element in the layout page:</p>
+<pre><code class="lang-cshtml">&lt;title&gt;@@ViewData[&quot;Title&quot;] - Movie App&lt;/title&gt;
+</code></pre>
+    <p>Save the change and navigate to <code>https://localhost:{PORT}/HelloWorld</code>.</p>
+    <p>Notice that the following have changed:</p>
+    <ul>
+        <li>Browser title.</li>
+        <li>Primary heading.</li>
+        <li>Secondary headings.</li>
+    </ul>
+    <p>If there are no changes in the browser, it could be cached content that is being viewed. Press Ctrl+F5 in the browser to force the response from the server to be loaded. The browser title is created with <code>ViewData[&quot;Title&quot;]</code> we set in the <em>Index.cshtml</em> view template and the additional &quot;- Movie App&quot; added in the layout file.</p>
+    <p>The content in the <em>Index.cshtml</em> view template is merged with the <em>Views/Shared/_Layout.cshtml</em> view template. A single HTML response is sent to the browser. Layout templates make it easy to make changes that apply across all of the pages in an app. To learn more, see <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/layout?view=aspnetcore-5.0" data-linktype="relative-path">Layout</a>.</p>
+    <p><img src="/img/addview04-hell50.png" alt="Movie List view" title="Movie List view"></p>
+    <p>The small bit of &quot;data&quot;, the &quot;Hello from our View Template!&quot; message, is hard-coded however. The MVC application has a &quot;V&quot; (view), a &quot;C&quot; (controller), but no &quot;M&quot; (model) yet.</p>
+    <h4 id="passing-data-from-the-controller-to-the-view">Passing Data from the Controller to the View</h4>
+    <p>Controller actions are invoked in response to an incoming URL request. A controller class is where the code is written that handles the incoming browser requests. The controller retrieves data from a data source and decides what type of response to send back to the browser. View templates can be used from a controller to generate and format an HTML response to the browser.</p>
+    <p>Controllers are responsible for providing the data required in order for a view template to render a response.</p>
+    <p>View templates should <strong>not</strong>:</p>
+    <ul>
+        <li>Do business logic</li>
+        <li>Interact with a database directly.</li>
+    </ul>
+    <p>A view template should work only with the data that's provided to it by the controller. Maintaining this &quot;separation of concerns&quot; helps keep the code:</p>
+    <ul>
+        <li>Clean.</li>
+        <li>Testable.</li>
+        <li>Maintainable.</li>
+    </ul>
+    <p>Currently, the <code>Welcome</code> method in the <code>HelloWorldController</code> class takes a <code>name</code> and a <code>ID</code> parameter and then outputs the values directly to the browser.</p>
+    <p>Rather than have the controller render this response as a string, change the controller to use a view template instead. The view template generates a dynamic response, which means that appropriate data must be passed from the controller to the view to generate the response. Do this by having the controller put the dynamic data (parameters) that the view template needs in a <code>ViewData</code> dictionary. The view template can then access the dynamic data.</p>
+    <p>In <em>HelloWorldController.cs</em>, change the <code>Welcome</code> method to add a <code>Message</code> and <code>NumTimes</code> value to the <code>ViewData</code> dictionary.</p>
+    <p>The <code>ViewData</code> dictionary is a dynamic object, which means any type can be used. The <code>ViewData</code> object has no defined properties until something is added. The <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0" data-linktype="relative-path">MVC model binding system</a> automatically maps the named parameters <code>name</code> and <code>numTimes</code> from the query string to parameters in the method. The complete <code>HelloWorldController</code>:</p>
+<pre><code class="lang-csharp" highlight-lines="13-19">using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
+
+namespace MvcMovie.Controllers
+{
+    public class HelloWorldController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Welcome(string name, int numTimes = 1)
+        {
+            ViewData[&quot;Message&quot;] = &quot;Hello &quot; + name;
+            ViewData[&quot;NumTimes&quot;] = numTimes;
+
+            return View();
+        }
+    }
+}
+</code></pre>
+    <p>The <code>ViewData</code> dictionary object contains data that will be passed to the view.</p>
+    <p>Create a Welcome view template named <em>Views/HelloWorld/Welcome.cshtml</em>.</p>
+    <p>You'll create a loop in the <em>Welcome.cshtml</em> view template that displays &quot;Hello&quot; <code>NumTimes</code>. Replace the contents of <em>Views/HelloWorld/Welcome.cshtml</em> with the following:</p>
+<pre><code class="lang-cshtml">@@{
+    ViewData[&quot;Title&quot;] = &quot;Welcome&quot;;
+}
+
+&lt;h2&gt;Welcome&lt;/h2&gt;
+
+&lt;ul&gt;
+    @@for (int i = 0; i &lt; (int)ViewData[&quot;NumTimes&quot;]!; i++)
+    {
+        &lt;li&gt;@@ViewData[&quot;Message&quot;]&lt;/li&gt;
+    }
+&lt;/ul&gt;
+</code></pre>
+    <p>Save your changes and browse to the following URL:</p>
+    <p><code>https://localhost:{PORT}/HelloWorld/Welcome?name=Rick&amp;numtimes=4</code></p>
+    <p>Data is taken from the URL and passed to the controller using the <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding?view=aspnetcore-5.0" data-linktype="relative-path">MVC model binder</a>. The controller packages the data into a <code>ViewData</code> dictionary and passes that object to the view. The view then renders the data as HTML to the browser.</p>
+    <p><img src="/img/addview05-rick2_50.png" alt="Privacy view showing a Welcome label and the phrase Hello Rick shown four times" title="Privacy view showing a Welcome label and the phrase Hello Rick shown four times"></p>
+    <p>In the preceding sample, the <code>ViewData</code> dictionary was used to pass data from the controller to a view. Later in the tutorial, a view model is used to pass data from a controller to a view. The view model approach to passing data is preferred over the <code>ViewData</code> dictionary approach.</p>
+    <p>In the next tutorial, a database of movies is created.</p>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddController">Previous: Add a Controller</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddModel">Next: Add a Model</a>
+    </div>
+
+</div>
+

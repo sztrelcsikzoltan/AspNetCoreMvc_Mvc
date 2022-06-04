@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Example1";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example02">Next: Example 2</a>
+    </div>
+
+    <h2>Example 1</h2>
+
+    <p>In this example an <a href="https://developer.mozilla.org/docs/Web/HTTP/Methods/GET" data-linktype="external">HTTP GET</a> method is invoked by appending <code>/HelloWorld/</code> to the base URL:</p>
+    <pre><code class="lang-csharp">using Microsoft.AspNetCore.Mvc;
+
+namespace AspNetCoreMvc_Mvc.Controllers
+{
+    public class HelloWorldController : Controller
+    {
+        // 
+        // GET: /HelloWorld/
+
+        public string Index()
+        {
+            return &quot;This is my default action...&quot;;
+        }
+    }
+}
+</code></pre>
+
+    <p>Press this button to envoke the example code: <a class="button whitespace_nowrap" asp-area="" target="_blank" asp-controller="HelloWorld" asp-action="">Run example 1</a></p>
+
+    <br />
+
+    <p>In the preceding URL segments:</p>
+    <ul>
+        <li>The first URL segment determines the controller class to run. So <code>localhost:{PORT}/HelloWorld</code> maps to the <strong>HelloWorld</strong> Controller class. The port number may differ, so replace <code>{PORT}</code> with your port number.</li>
+        <li>The second part of the URL segment determines the action method on the class. So <code>localhost:5001/HelloWorld/Index</code> causes the <code>Index</code> method of the <code>HelloWorldController</code> class to run. Notice that you only had to browse to <code>localhost:{PORT}/HelloWorld</code> and the <code>Index</code> method was called by default. <code>Index</code> is the default method that will be called on a controller if a method name isn't explicitly specified.</li>
+    </ul>
+
+    <div class="div-flex">
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="Examples" asp-action="Example02">Next: Example 2</a>
+    </div>
+
+</div>
+

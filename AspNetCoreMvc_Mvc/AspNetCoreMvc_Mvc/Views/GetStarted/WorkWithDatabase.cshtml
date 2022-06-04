@@ -1,0 +1,192 @@
+﻿@{
+    ViewData["Title"] = "Work with a database";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddModel">Previous: Add a Model</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="ControllerMethods">Next: Controller methods</a>
+    </div>
+
+    <h2>Part 5, work with a database in an ASP.NET Core MVC app</h2>
+
+    <p>The <code>MvcMovieContext</code> object handles the task of connecting to the database and mapping <code>Movie</code> objects to database records. The database context is registered with the <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-5.0" data-linktype="relative-path">Dependency Injection</a> container in the <code>ConfigureServices</code> method in the <em>Startup.cs</em> file:</p>
+    <pre><code class="lang-csharp" highlight-lines="5-6">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllersWithViews();
+
+    services.AddDbContext&lt;MvcMovieContext&gt;(options =&gt;
+    options.UseSqlServer(Configuration.GetConnectionString(&quot;MvcMovieContext&quot;)));
+}
+</code></pre>
+    <p>The ASP.NET Core <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0" data-linktype="relative-path">Configuration</a> system reads the <code>ConnectionString</code> key. For local development, it gets the connection string from the <em>appsettings.json</em> file:</p>
+<pre><code class="lang-json" highlight-lines="2">&quot;ConnectionStrings&quot;: {
+  &quot;MvcMovieContext&quot;: &quot;Server=(localdb)\\mssqllocaldb;Database=MvcMovieContext-2;Trusted_Connection=True;MultipleActiveResultSets=true&quot;
+}
+</code></pre>
+
+    <p>When the app is deployed to a test or production server, an environment variable can be used to set the connection string to a production SQL Server. For more information, see <a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0" data-linktype="relative-path">Configuration</a>.</p>
+
+    <h4 id="sql-server-express-localdb-1">SQL Server Express LocalDB</h4>
+    <p>LocalDB:</p>
+    <ul>
+        <li>Is a lightweight version of the SQL Server Express Database Engine, installed by default with Visual Studio.</li>
+        <li>Starts on demand by using a connection string.</li>
+        <li>Is targeted for program development. It runs in user mode, so there's no complex configuration.</li>
+        <li>By default creates <em>.mdf</em> files in the <em>C:/Users/{user}</em> directory.</li>
+    </ul>
+    <h4 id="examine-the-database">Examine the database</h4>
+    <p>From the <strong>View</strong> menu, open <strong>SQL Server Object Explorer</strong> (SSOX).</p>
+    <p><img src="/img/workdatabase01-ssox5.png" alt="View menu" title="View menu" data-linktype="relative-path"></p>
+    <p>Right-click on the <code>Movie</code> table <strong>&gt; View Designer</strong></p>
+    <p><img src="/img/workdatabase02-design.png" alt="Right-click on the Movie table &gt; View Designer" title="Right-click on the Movie table &gt; View Designer" data-linktype="relative-path"></p>
+    <p><img src="/img/workdatabase03-dv.png" alt="Movie table open in Designer" title="Movie table open in Designer" data-linktype="relative-path"></p>
+    <p>Note the key icon next to <code>ID</code>. By default, EF makes a property named <code>ID</code> the primary key.</p>
+    <p>Right-click on the <code>Movie</code> table <strong>&gt; View Data</strong></p>
+    <p><img src="/img/workdatabase04-ssox2.png" alt="Right-click on the Movie table &gt; View Data" title="Right-click on the Movie table &gt; View Data" data-linktype="relative-path"></p>
+    <p><img src="/img/workdatabase05-vd22.png" alt="Movie table open showing table data" title="Movie table open showing table data" data-linktype="relative-path"></p>
+
+    <h4 id="seed-the-database-1">Seed the database</h4>
+    <p>Create a new class named <code>SeedData</code> in the <em>Models</em> folder. Replace the generated code with the following:</p>
+<pre><code class="lang-csharp">using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using MvcMovie.Data;
+using System;
+using System.Linq;
+
+namespace MvcMovie.Models
+{
+    public static class SeedData
+    {
+        public static void Initialize(IServiceProvider serviceProvider)
+        {
+            using (var context = new MvcMovieContext(
+                serviceProvider.GetRequiredService&lt;
+                    DbContextOptions&lt;MvcMovieContext&gt;&gt;()))
+            {
+                // Look for any movies.
+                if (context.Movie.Any())
+                {
+                    return;   // DB has been seeded
+                }
+
+                context.Movie.AddRange(
+                    new Movie
+                    {
+                        Title = &quot;When Harry Met Sally&quot;,
+                        ReleaseDate = DateTime.Parse(&quot;1989-2-12&quot;),
+                        Genre = &quot;Romantic Comedy&quot;,
+                        Price = 7.99M
+                    },
+
+                    new Movie
+                    {
+                        Title = &quot;Ghostbusters &quot;,
+                        ReleaseDate = DateTime.Parse(&quot;1984-3-13&quot;),
+                        Genre = &quot;Comedy&quot;,
+                        Price = 8.99M
+                    },
+
+                    new Movie
+                    {
+                        Title = &quot;Ghostbusters 2&quot;,
+                        ReleaseDate = DateTime.Parse(&quot;1986-2-23&quot;),
+                        Genre = &quot;Comedy&quot;,
+                        Price = 9.99M
+                    },
+
+                    new Movie
+                    {
+                        Title = &quot;Rio Bravo&quot;,
+                        ReleaseDate = DateTime.Parse(&quot;1959-4-15&quot;),
+                        Genre = &quot;Western&quot;,
+                        Price = 3.99M
+                    }
+                );
+                context.SaveChanges();
+            }
+        }
+    }
+}
+</code></pre>
+    <p>If there are any movies in the database, the seed initializer returns and no movies are added.</p>
+<pre><code class="lang-csharp">if (context.Movie.Any())
+{
+    return;  // DB has been seeded.
+}
+</code></pre>
+    <p><a name="si"></a></p>
+    <h4 id="add-the-seed-initializer-1">Add the seed initializer</h4>
+    <p>Replace the contents of <em>Program.cs</em> with the following code:</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using MvcMovie.Data;
+using MvcMovie.Models;
+using System;
+
+namespace MvcMovie
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var host = CreateHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                try
+                {
+                    SeedData.Initialize(services);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService&lt;ILogger&lt;Program&gt;&gt;();
+                    logger.LogError(ex, &quot;An error occurred seeding the DB.&quot;);
+                }
+            }
+
+            host.Run();
+
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =&gt;
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =&gt;
+                {
+                    webBuilder.UseStartup&lt;Startup&gt;();
+                });
+    }
+}
+</code></pre>
+    <p>Test the app.</p>
+
+    <p>Delete all the records in the database. You can do this with the delete links in the browser or from SSOX.</p>
+    <p>Force the app to initialize, calling the methods in the <code>Startup</code> class, so the seed method runs. To force initialization, IIS Express must be stopped and restarted. You can do this with any of the following approaches:</p>
+    <ul>
+        <li>
+            <p>Right-click the IIS Express system tray icon in the notification area and tap <strong>Exit</strong> or <strong>Stop Site</strong>:</p>
+            <p><img src="/img/workdatabase06-iisexicon.png" alt="IIS Express system tray icon" title="IIS Express system tray icon"></p>
+            <p><img src="/img/workdatabase06-stopiis.png" alt="Contextual menu" title="Contextual menu"></p>
+            <ul>
+                <li>If you were running VS in non-debug mode, press F5 to run in debug mode</li>
+                <li>If you were running VS in debug mode, stop the debugger and press F5</li>
+            </ul>
+        </li>
+    </ul>
+
+    <p>The app shows the seeded data.</p>
+    <p><img src="/img/workdatabase07-m55.png" alt="MVC Movie app open in Microsoft Edge showing movie data" title="MVC Movie app open in Microsoft Edge showing movie data"></p>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddModel">Previous: Add a Model</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="ControllerMethods">Next: Controller methods</a>
+    </div>
+
+</div>
+

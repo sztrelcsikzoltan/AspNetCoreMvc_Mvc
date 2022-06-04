@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Examine the Details and Delete methods";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddNewField">Previous: Add validation</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="GetStarted">Back to: Get started</a>
+    </div>
+
+    <h2>Part 10, examine the Details and Delete methods of an ASP.NET Core app</h2>
+
+    <p>Open the Movie controller and examine the <code>Details</code> method:</p>
+<pre><code class="lang-csharp">// GET: Movies/Details/5
+public async Task&lt;IActionResult&gt; Details(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+    var movie = await _context.Movie
+        .FirstOrDefaultAsync(m =&gt; m.Id == id);
+    if (movie == null)
+    {
+        return NotFound();
+    }
+
+    return View(movie);
+}
+</code></pre>
+    <p>The MVC scaffolding engine that created this action method adds a comment showing an HTTP request that invokes the method. In this case it's a GET request with three URL segments, the <code>Movies</code> controller, the <code>Details</code> method, and an <code>id</code> value. Recall these segments are defined in <em>Startup.cs</em>.</p>
+<pre><code class="lang-csharp" highlight-lines="5">app.UseEndpoints(endpoints =&gt;
+{
+    endpoints.MapControllerRoute(
+        name: &quot;default&quot;,
+        pattern: &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+});
+</code></pre>
+    <p>EF makes it easy to search for data using the <code>FirstOrDefaultAsync</code> method. An important security feature built into the method is that the code verifies that the search method has found a movie before it tries to do anything with it. For example, a hacker could introduce errors into the site by changing the URL created by the links from <code>http://localhost:{PORT}/Movies/Details/1</code> to something like  <code>http://localhost:{PORT}/Movies/Details/12345</code> (or some other value that doesn't represent an actual movie). If you didn't check for a null movie, the app would throw an exception.</p>
+    <p>Examine the <code>Delete</code> and <code>DeleteConfirmed</code> methods.</p>
+<pre><code class="lang-csharp">// GET: Movies/Delete/5
+public async Task&lt;IActionResult&gt; Delete(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+    var movie = await _context.Movie
+        .FirstOrDefaultAsync(m =&gt; m.Id == id);
+    if (movie == null)
+    {
+        return NotFound();
+    }
+
+    return View(movie);
+}
+
+// POST: Movies/Delete/5
+[HttpPost, ActionName(&quot;Delete&quot;)]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; DeleteConfirmed(int id)
+{
+    var movie = await _context.Movie.FindAsync(id);
+    _context.Movie.Remove(movie);
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+}
+</code></pre>
+    <p>Note that the <code>HTTP GET Delete</code> method doesn't delete the specified movie, it returns a view of the movie where you can submit (HttpPost) the deletion. Performing a delete operation in response to a GET request (or for that matter, performing an edit operation, create operation, or any other operation that changes data) opens up a security hole.</p>
+    <p>The <code>[HttpPost]</code> method that deletes the data is named <code>DeleteConfirmed</code> to give the HTTP POST method a unique signature or name. The two method signatures are shown below:</p>
+<pre><code class="lang-csharp">// GET: Movies/Delete/5
+public async Task&lt;IActionResult&gt; Delete(int? id)
+{
+</code></pre><pre><code class="lang-csharp">// POST: Movies/Delete/5
+[HttpPost, ActionName(&quot;Delete&quot;)]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; DeleteConfirmed(int id)
+{
+</code></pre>
+    <p>The common language runtime (CLR) requires overloaded methods to have a unique parameter signature (same method name but different list of parameters). However, here you need two <code>Delete</code> methods -- one for GET and one for POST -- that both have the same parameter signature. (They both need to accept a single integer as a parameter.)</p>
+    <p>There are two approaches to this problem, one is to give the methods different names. That's what the scaffolding mechanism did in the preceding example. However, this introduces a small problem: ASP.NET maps segments of a URL to action methods by name, and if you rename a method, routing normally wouldn't be able to find that method. The solution is what you see in the example, which is to add the <code>ActionName(&quot;Delete&quot;)</code> attribute to the <code>DeleteConfirmed</code> method. That attribute performs mapping for the routing system so that a URL that includes /Delete/ for a POST request will find the <code>DeleteConfirmed</code> method.</p>
+    <p>Another common work around for methods that have identical names and signatures is to artificially change the signature of the POST method to include an extra (unused) parameter. That's what we did in a previous post when we added the <code>notUsed</code> parameter. You could do the same thing here for the <code>[HttpPost] Delete</code> method:</p>
+<pre><code class="lang-csharp">// POST: Movies/Delete/6
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; Delete(int id, bool notUsed)
+</code></pre>
+    <h4 id="publish-to-azure-1">Publish to Azure</h4>
+    <p>For information on deploying to Azure, see <a href="https://docs.microsoft.com/en-us/azure/app-service/tutorial-dotnetcore-sqldb-app" data-linktype="absolute-path">Tutorial: Build an ASP.NET Core and SQL Database app in Azure App Service</a>.</p>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddNewField">Previous: Add validation</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="GetStarted">Back to: Get started</a>
+    </div>
+
+</div>

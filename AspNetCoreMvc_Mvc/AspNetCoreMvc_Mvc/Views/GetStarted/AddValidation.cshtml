@@ -1,0 +1,239 @@
+﻿@{
+    ViewData["Title"] = "Add validation";
+}
+
+<div class="container">
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddNewField">Previous: Add a new field</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="ExamineDetails">Next: Examine the Details and Delete methods</a>
+    </div>
+
+    <h2>Part 9, add validation to an ASP.NET Core MVC app</h2>
+
+    <p>In this section:</p>
+    <ul>
+        <li>Validation logic is added to the <code>Movie</code> model.</li>
+        <li>You ensure that the validation rules are enforced any time a user creates or edits a movie.</li>
+    </ul>
+    <h4 id="keeping-things-dry">Keeping things DRY</h4>
+    <p>One of the design tenets of MVC is <a href="https://wikipedia.org/wiki/Don%27t_repeat_yourself" data-linktype="external">DRY</a> (&quot;Don't Repeat Yourself&quot;). ASP.NET Core MVC encourages you to specify functionality or behavior only once, and then have it be reflected everywhere in an app. This reduces the amount of code you need to write and makes the code you do write less error prone, easier to test, and easier to maintain.</p>
+    <p>The validation support provided by MVC and Entity Framework Core Code First is a good example of the DRY principle in action. You can declaratively specify validation rules in one place (in the model class) and the rules are enforced everywhere in the app.</p>
+    <!-- USED in RP and MVC tutorial for .NET 6 -->
+    <h4 id="add-validation-rules-to-the-movie-model">Add validation rules to the movie model</h4>
+    <p>The DataAnnotations namespace provides a set of built-in validation attributes that are applied declaratively to a class or property. DataAnnotations also contains formatting attributes like <code>DataType</code> that help with formatting and don't provide any validation.</p>
+    <p>Update the <code>Movie</code> class to take advantage of the built-in <code>Required</code>, <code>StringLength</code>, <code>RegularExpression</code>, and <code>Range</code> validation attributes.</p>
+<pre><code class="lang-csharp">using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MvcMovie.Models
+{
+    public class Movie
+    {
+        public int Id { get; set; }
+
+        [StringLength(60, MinimumLength = 3)]
+        [Required]
+        public string? Title { get; set; }
+
+        [Display(Name = &quot;Release Date&quot;)]
+        [DataType(DataType.Date)]
+        public DateTime ReleaseDate { get; set; }
+
+        [Range(1, 100)]
+        [DataType(DataType.Currency)]
+        [Column(TypeName = &quot;decimal(18, 2)&quot;)]
+        public decimal Price { get; set; }
+
+        [RegularExpression(@@&quot;^[A-Z]+[a-zA-Z\s]*$&quot;)]
+        [Required]
+        [StringLength(30)]
+        public string? Genre { get; set; }
+
+        [RegularExpression(@@&quot;^[A-Z]+[a-zA-Z0-9&quot;&quot;'\s-]*$&quot;)]
+        [StringLength(5)]
+        [Required]
+        public string? Rating { get; set; }
+    }
+}
+</code></pre>
+    <p>The validation attributes specify behavior that you want to enforce on the model properties they're applied to:</p>
+    <ul>
+        <li>
+            <p>The <code>Required</code> and <code>MinimumLength</code> attributes indicate that a property must have a value; but nothing prevents a user from entering white space to satisfy this validation.</p>
+        </li>
+        <li>
+            <p>The <code>RegularExpression</code> attribute is used to limit what characters can be input. In the preceding code, &quot;Genre&quot;:</p>
+            <ul>
+                <li>Must only use letters.</li>
+                <li>
+                    The first letter is required to be uppercase. White spaces are allowed while numbers, and special
+                    characters are not allowed.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <p>The <code>RegularExpression</code> &quot;Rating&quot;:</p>
+            <ul>
+                <li>Requires that the first character be an uppercase letter.</li>
+                <li>Allows special characters and numbers in subsequent spaces. &quot;PG-13&quot; is valid for a rating, but fails for a &quot;Genre&quot;.</li>
+            </ul>
+        </li>
+        <li>
+            <p>The <code>Range</code> attribute constrains a value to within a specified range.</p>
+        </li>
+        <li>
+            <p>The <code>StringLength</code> attribute lets you set the maximum length of a string property, and optionally its minimum length.</p>
+        </li>
+        <li>
+            <p>Value types (such as <code>decimal</code>, <code>int</code>, <code>float</code>, <code>DateTime</code>) are inherently required and don't need the <code>[Required]</code> attribute.</p>
+        </li>
+    </ul>
+    <p>Having validation rules automatically enforced by ASP.NET Core helps make your app more robust. It also ensures that you can't forget to validate something and inadvertently let bad data into the database.</p>
+    <h4 id="validation-error-ui">Validation Error UI</h4>
+    <p>Run the app and navigate to the Movies controller.</p>
+    <p>Select the <strong>Create New</strong> link to add a new movie. Fill out the form with some invalid values. As soon as jQuery client side validation detects the error, it displays an error message.</p>
+    <p><img src="/img/addvalidation01-val.png" alt="Movie view form with multiple jQuery client side validation errors" title="Movie view form with multiple jQuery client side validation errors"></p>
+    <div class="NOTE">
+        <p>Note</p>
+        <p>You may not be able to enter decimal commas in decimal fields. To support <a href="https://jqueryvalidation.org/" data-linktype="external">jQuery validation</a> for non-English locales that use a comma (&quot;,&quot;) for a decimal point, and non US-English date formats, you must take steps to globalize your app. <a href="https://github.com/dotnet/AspNetCore.Docs/issues/4076#issuecomment-326590420" data-linktype="external">See this GitHub issue 4076</a> for instructions on adding decimal comma.</p>
+    </div>
+    <p>Notice how the form has automatically rendered an appropriate validation error message in each field containing an invalid value. The errors are enforced both client-side (using JavaScript and jQuery) and server-side (in case a user has JavaScript disabled).</p>
+    <p>A significant benefit is that you didn't need to change a single line of code in the <code>MoviesController</code> class or in the <em>Create.cshtml</em> view in order to enable this validation UI. The controller and views you created earlier in this tutorial automatically picked up the validation rules that you specified by using validation attributes on the properties of the <code>Movie</code> model class. Test validation using the <code>Edit</code> action method, and the same validation is applied.</p>
+    <p>The form data isn't sent to the server until there are no client side validation errors. You can verify this by putting a break point in the <code>HTTP Post</code> method, by using the <a href="https://www.telerik.com/fiddler" data-linktype="external">Fiddler tool</a> , or the <a href="https://docs.microsoft.com/en-us/microsoft-edge/devtools-guide" data-linktype="absolute-path">F12 Developer tools</a>.</p>
+    <h4 id="how-validation-works">How validation works</h4>
+    <p>You might wonder how the validation UI was generated without any updates to the code in the controller or views. The following code shows the two <code>Create</code> methods.</p>
+<pre><code class="lang-csharp">// GET: Movies/Create
+public IActionResult Create()
+{
+    return View();
+}
+
+// POST: Movies/Create
+// To protect from overposting attacks, enable the specific properties you want to bind to.
+// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; Create([Bind(&quot;Id,Title,ReleaseDate,Genre,Price,Rating&quot;)] Movie movie)
+{
+    if (ModelState.IsValid)
+    {
+        _context.Add(movie);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    return View(movie);
+}
+</code></pre>
+    <p>The first (HTTP GET) <code>Create</code> action method displays the initial Create form. The second (<code>[HttpPost]</code>) version handles the form post. The second <code>Create</code> method (The <code>[HttpPost]</code> version) calls <code>ModelState.IsValid</code> to check whether the movie has any validation errors. Calling this method evaluates any validation attributes that have been applied to the object. If the object has validation errors, the <code>Create</code> method re-displays the form. If there are no errors, the method saves the new movie in the database. In our movie example, the form isn't posted to the server when there are validation errors detected on the client side; the second <code>Create</code> method is never called when there are client side validation errors. If you disable JavaScript in your browser, client validation is disabled and you can test the HTTP POST <code>Create</code> method <code>ModelState.IsValid</code> detecting any validation errors.</p>
+    <p>You can set a break point in the <code>[HttpPost] Create</code> method and verify the method is never called, client side validation won't submit the form data when validation errors are detected. If you disable JavaScript in your browser, then submit the form with errors, the break point will be hit. You still get full validation without JavaScript.</p>
+    <p>The following image shows how to disable JavaScript in the Firefox browser.</p>
+    <p><img src="/img/addvalidation02-ff.png" alt="Firefox: On the Content tab of Options, uncheck the Enable Javascript checkbox." title="Firefox: On the Content tab of Options, uncheck the Enable Javascript checkbox."></p>
+    <p>The following image shows how to disable JavaScript in the Chrome browser.</p>
+    <p><img src="/img/addvalidation03-chrome.png" alt="Google Chrome: In the Javascript section of Content settings, select Do not allow any site to run JavaScript." title="Google Chrome: In the Javascript section of Content settings, select Do not allow any site to run JavaScript."></p>
+    <p>After you disable JavaScript, post invalid data and step through the debugger.</p>
+    <p><img src="/img/addvalidation04-ms.png" alt="While debugging on a post of invalid data, Intellisense on ModelState.IsValid shows the value is false." title="While debugging on a post of invalid data, Intellisense on ModelState.IsValid shows the value is false."></p>
+    <p>A portion of the <em>Create.cshtml</em> view template is shown in the following markup:</p>
+<pre><code class="lang-HTML">&lt;h4&gt;Movie&lt;/h4&gt;
+&lt;hr /&gt;
+&lt;div class=&quot;row&quot;&gt;
+    &lt;div class=&quot;col-md-4&quot;&gt;
+        &lt;form asp-action=&quot;Create&quot;&gt;
+            &lt;div asp-validation-summary=&quot;ModelOnly&quot; class=&quot;text-danger&quot;&gt;&lt;/div&gt;
+            &lt;div class=&quot;form-group&quot;&gt;
+                &lt;label asp-for=&quot;Title&quot; class=&quot;control-label&quot;&gt;&lt;/label&gt;
+                &lt;input asp-for=&quot;Title&quot; class=&quot;form-control&quot; /&gt;
+                &lt;span asp-validation-for=&quot;Title&quot; class=&quot;text-danger&quot;&gt;&lt;/span&gt;
+            &lt;/div&gt;
+
+            @@*Markup removed for brevity.*@@
+</code></pre>
+    <p>The preceding markup is used by the action methods to display the initial form and to redisplay it in the event of an error.</p>
+    <p>The <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/working-with-forms?view=aspnetcore-5.0" data-linktype="relative-path">Input Tag Helper</a> uses the <a href="https://docs.microsoft.com/en-us/aspnet/mvc/overview/older-versions/mvc-music-store/mvc-music-store-part-6" data-linktype="absolute-path">DataAnnotations</a> attributes and produces HTML attributes needed for jQuery Validation on the client side. The <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/working-with-forms?view=aspnetcore-5.0#the-validation-tag-helpers" data-linktype="relative-path">Validation Tag Helper</a> displays validation errors. See <a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-5.0" data-linktype="relative-path">Validation</a> for more information.</p>
+    <p>What's really nice about this approach is that neither the controller nor the <code>Create</code> view template knows anything about the actual validation rules being enforced or about the specific error messages displayed. The validation rules and the error strings are specified only in the <code>Movie</code> class. These same validation rules are automatically applied to the <code>Edit</code> view and any other views templates you might create that edit your model.</p>
+    <p>When you need to change validation logic, you can do so in exactly one place by adding validation attributes to the model (in this example, the <code>Movie</code> class). You won't have to worry about different parts of the application being inconsistent with how the rules are enforced — all validation logic will be defined in one place and used everywhere. This keeps the code very clean, and makes it easy to maintain and evolve. And it means that you'll be fully honoring the DRY principle.</p>
+    <h4 id="using-datatype-attributes">Using DataType Attributes</h4>
+    <p>Open the <em>Movie.cs</em> file and examine the <code>Movie</code> class. The <code>System.ComponentModel.DataAnnotations</code> namespace provides formatting attributes in addition to the built-in set of validation attributes. We've already applied a <code>DataType</code> enumeration value to the release date and to the price fields. The following code shows the <code>ReleaseDate</code> and <code>Price</code> properties with the appropriate <code>DataType</code> attribute.</p>
+<pre><code class="lang-csharp" highlight-lines="2,6">[Display(Name = &quot;Release Date&quot;)]
+[DataType(DataType.Date)]
+public DateTime ReleaseDate { get; set; }
+
+[Range(1, 100)]
+[DataType(DataType.Currency)]
+[Column(TypeName = &quot;decimal(18, 2)&quot;)]
+public decimal Price { get; set; }
+</code></pre>
+    <p>
+        The <code>DataType</code> attributes only provide hints for the view engine to format the data (and supplies elements/attributes such as <code>&lt;a&gt;</code> for URL's and <code>&lt;a href=&quot;mailto:EmailAddress.com&quot;&gt;</code> for email. You can use the <code>RegularExpression</code> attribute to validate the format of the data. The <code>DataType</code> attribute is used to specify a data type that's more specific than the database intrinsic type, they're not validation attributes. In this case we only want to keep track of the date, not the time. The <code>DataType</code> Enumeration provides for many data types, such as Date, Time, PhoneNumber, Currency, EmailAddress and more. The <code>DataType</code> attribute can also enable the application to automatically provide type-specific features. For example, a <code>mailto:</code> link can be created for <code>DataType.EmailAddress</code>, and a date selector can be provided for <code>DataType.Date</code> in browsers that support HTML5. The <code>DataType</code> attributes emit HTML 5 <code>data-</code> (pronounced data dash) attributes that HTML 5 browsers can understand. The
+        <code>DataType</code> attributes do <strong>not</strong> provide any validation.
+    </p>
+    <p><code>DataType.Date</code> doesn't specify the format of the date that's displayed. By default, the data field is displayed according to the default formats based on the server's <code>CultureInfo</code>.</p>
+    <p>The <code>DisplayFormat</code> attribute is used to explicitly specify the date format:</p>
+<pre><code class="lang-csharp">[DisplayFormat(DataFormatString = &quot;{0:yyyy-MM-dd}&quot;, ApplyFormatInEditMode = true)]
+public DateTime ReleaseDate { get; set; }
+</code></pre>
+    <p>The <code>ApplyFormatInEditMode</code> setting specifies that the formatting should also be applied when the value is displayed in a text box for editing. (You might not want that for some fields — for example, for currency values, you probably don't want the currency symbol in the text box for editing.)</p>
+    <p>You can use the <code>DisplayFormat</code> attribute by itself, but it's generally a good idea to use the <code>DataType</code> attribute. The <code>DataType</code> attribute conveys the semantics of the data as opposed to how to render it on a screen, and provides the following benefits that you don't get with DisplayFormat:</p>
+    <ul>
+        <li>
+            <p>The browser can enable HTML5 features (for example to show a calendar control, the locale-appropriate currency symbol, email links, etc.)</p>
+        </li>
+        <li>
+            <p>By default, the browser will render data using the correct format based on your locale.</p>
+        </li>
+        <li>
+            <p>The <code>DataType</code> attribute can enable MVC to choose the right field template to render the data (the <code>DisplayFormat</code> if used by itself uses the string template).</p>
+        </li>
+    </ul>
+    <div class="NOTE">
+        <p>Note</p>
+        <p>jQuery validation doesn't work with the <code>Range</code> attribute and <code>DateTime</code>. For example, the following code will always display a client side validation error, even when the date is in the specified range:</p>
+        <p><code>[Range(typeof(DateTime), &quot;1/1/1966&quot;, &quot;1/1/2020&quot;)]</code></p>
+    </div>
+    <p>You will need to disable jQuery date validation to use the <code>Range</code> attribute with <code>DateTime</code>. It's generally not a good practice to compile hard dates in your models, so using the <code>Range</code> attribute and <code>DateTime</code> is discouraged.</p>
+    <p>The following code shows combining attributes on one line:</p>
+<pre><code class="lang-csharp">using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MvcMovie.Models
+{
+    public class Movie
+    {
+        public int Id { get; set; }
+
+        [StringLength(60, MinimumLength = 3)]
+        public string Title { get; set; }
+
+        [Display(Name = &quot;Release Date&quot;), DataType(DataType.Date)]
+        public DateTime ReleaseDate { get; set; }
+
+        [RegularExpression(@@&quot;^[A-Z]+[a-zA-Z\s]*$&quot;), Required, StringLength(30)]
+        public string Genre { get; set; }
+
+        [Range(1, 100), DataType(DataType.Currency)]
+        [Column(TypeName = &quot;decimal(18, 2)&quot;)]
+        public decimal Price { get; set; }
+
+        [RegularExpression(@@&quot;^[A-Z]+[a-zA-Z0-9&quot;&quot;'\s-]*$&quot;), StringLength(5)]
+        public string Rating { get; set; }
+    }
+}
+</code></pre>
+    <p>In the next part of the series, we review the app and make some improvements to the automatically generated <code>Details</code> and <code>Delete</code> methods.</p>
+    <h4 id="additional-resources">Additional resources</h4>
+    <ul>
+        <li><a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/working-with-forms?view=aspnetcore-5.0" data-linktype="relative-path">Working with Forms</a></li>
+        <li><a href="../../fundamentals/localization?view=aspnetcore-5.0" data-linktype="relative-path">Globalization and localization</a></li>
+        <li><a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/intro?view=aspnetcore-5.0" data-linktype="relative-path">Introduction to Tag Helpers</a></li>
+        <li><a href="https://docs.microsoft.com/en-us/aspnet/core/mvc/views/tag-helpers/authoring?view=aspnetcore-5.0" data-linktype="relative-path">Author Tag Helpers</a></li>
+    </ul>
+
+    <div class="div-flex">
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="AddNewField">Previous: Add a new field</a>
+        <span class="span-flex"></span>
+        <a class="button" asp-area="" asp-controller="GetStarted" asp-action="ExamineDetails">Next: Examine the Details and Delete methods</a>
+    </div>
+
+</div>
